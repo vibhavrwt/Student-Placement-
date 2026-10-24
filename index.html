@@ -39,19 +39,19 @@
 
       <section class="stats-grid" aria-label="Dashboard summary">
         <article class="stat-card"><div class="stat-top"><span class="stat-icon purple">♙</span><span class="stat-caption">PROFILE DIRECTORY</span></div><div class="stat-number" id="studentCount">5</div><div class="stat-bottom">Student profiles <span class="stat-trend">↗</span></div></article>
-        <article class="stat-card"><div class="stat-top"><span class="stat-icon teal">✧</span><span class="stat-caption">SKILL COVERAGE</span></div><div class="stat-number" id="skillCount">8</div><div class="stat-bottom">Distinct skills listed <span class="stat-trend">↗</span></div></article>
-        <article class="stat-card"><div class="stat-top"><span class="stat-icon orange">◎</span><span class="stat-caption">PATHWAYS</span></div><div class="stat-number">4</div><div class="stat-bottom">Opportunity categories <span class="stat-trend">↗</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-icon teal">✧</span><span class="stat-caption">SKILL COVERAGE</span></div><div class="stat-number" id="skillCount">12</div><div class="stat-bottom">Distinct skills listed <span class="stat-trend">↗</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-icon orange">◎</span><span class="stat-caption">PATHWAYS</span></div><div class="stat-number">3</div><div class="stat-bottom">Opportunity categories <span class="stat-trend">↗</span></div></article>
         <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">⌘</span><span class="stat-caption">GRAPH DEMO</span></div><div class="stat-number">BFS / DFS</div><div class="stat-bottom">Graph traversal examples</div></article>
       </section>
 
       <section class="content-grid" id="insights">
         <article class="panel skill-panel"><div class="panel-heading"><div><h3>Skill landscape</h3><p>Most frequently listed skills across sample profiles</p></div><span class="panel-menu">•••</span></div><div class="chart-wrap"><canvas id="skillsChart" aria-label="Bar chart of skill frequency"></canvas></div><div class="panel-foot"><span class="legend-dot purple-dot"></span> Skill mentions <span class="foot-note">Illustrative sample data</span></div></article>
-        <article class="panel opportunity-panel"><div class="panel-heading"><div><h3>Opportunity mix</h3><p>Explore common career pathways</p></div><span class="panel-menu">•••</span></div><div class="donut-wrap"><canvas id="opportunityChart" aria-label="Doughnut chart of opportunity types"></canvas><div class="donut-center"><strong>4</strong><span>PATHWAYS</span></div></div><div class="legend-list"><span><i class="legend-dot purple-dot"></i>Internship <b>35%</b></span><span><i class="legend-dot teal-dot"></i>Full-time <b>30%</b></span><span><i class="legend-dot orange-dot"></i>Project <b>20%</b></span><span><i class="legend-dot blue-dot"></i>Training <b>15%</b></span></div></article>
+        <article class="panel opportunity-panel"><div class="panel-heading"><div><h3>Opportunity mix</h3><p>Explore common career pathways</p></div><span class="panel-menu">•••</span></div><div class="donut-wrap"><canvas id="opportunityChart" aria-label="Doughnut chart of opportunity types"></canvas><div class="donut-center"><strong>4</strong><span>PATHWAYS</span></div></div><div class="legend-list"><span><i class="legend-dot purple-dot"></i>Internship <b>2</b></span><span><i class="legend-dot teal-dot"></i>Placement <b>1</b></span><span><i class="legend-dot orange-dot"></i>Either <b>2</b></span></div></article>
       </section>
 
-      <section class="panel students-panel" id="students"><div class="panel-heading students-heading"><div><h3>Student profiles</h3><p>Sample directory — search by name, skill, or interest</p></div><div class="table-actions"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Search profiles..." aria-label="Search student profiles"></label><button class="outline-btn" id="addSampleBtn">＋ Add sample</button></div></div>
-        <div class="table-scroll"><table><thead><tr><th>STUDENT</th><th>SKILLS</th><th>INTEREST</th><th>READINESS</th></tr></thead><tbody id="studentRows"></tbody></table></div>
-        <div class="table-footer"><span id="resultCount">Showing 5 profiles</span><span class="table-footer-note">Sample information for demonstration</span></div>
+      <section class="panel students-panel" id="students"><div class="panel-heading students-heading"><div><h3>Student profiles</h3><p>Original sample profiles — search by name, skill, role, or location</p></div><div class="table-actions"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Search profiles..." aria-label="Search student profiles"></label><button class="outline-btn" id="addSampleBtn">＋ Add sample</button></div></div>
+        <div class="table-scroll"><table><thead><tr><th>STUDENT / COURSE</th><th>SKILLS</th><th>PREFERRED ROLE / LOCATION</th><th>OPPORTUNITY TYPE</th></tr></thead><tbody id="studentRows"></tbody></table></div>
+        <div class="table-footer"><span id="resultCount">Showing 5 profiles</span><span class="table-footer-note">Illustrative project data</span></div>
       </section>
 
       <section class="content-grid lower-grid" id="network">
@@ -59,6 +59,13 @@
         <article class="panel traversal-panel"><div class="panel-heading"><div><h3>Graph traversal lab</h3><p>Try common graph search approaches</p></div></div><div class="traversal-info"><div class="algo-icon">⌘</div><div><strong>Explore connections</strong><p>BFS explores level by level. DFS follows a branch before backtracking.</p></div></div><div class="traversal-buttons"><button class="primary-btn small" id="bfsBtn">Run BFS</button><button class="outline-btn small" id="dfsBtn">Run DFS</button></div><div class="traversal-result" aria-live="polite"><span class="result-label">TRAVERSAL ORDER</span><p id="traversalOutput">Choose BFS or DFS to see a sample traversal.</p></div></article>
       </section>
 
+
+      <section class="content-grid lower-grid" id="graph-representations">
+        <article class="panel network-panel"><div class="panel-heading"><div><h3>Adjacency list</h3><p>Original sample student-to-skill connections.</p></div><span class="tag">GRAPH DATA</span></div><div class="adjacency-list-restored">
+          <p><b>Vibhav Rawat</b><span>Python · SQL · Cybersecurity</span></p><p><b>Prachi Raghav</b><span>Python · HTML · CSS · Communication</span></p><p><b>Ridhima Sinha</b><span>Java · DSA · SQL</span></p><p><b>Sumit Kumar</b><span>Python · Data Analysis · Excel</span></p><p><b>Abhas Rawat</b><span>JavaScript · HTML · CSS · UI Design</span></p>
+        </div></article>
+        <article class="panel traversal-panel"><div class="panel-heading"><div><h3>Adjacency matrix</h3><p>1 = connected, 0 = no direct connection (illustrative sample).</p></div></div><div class="table-scroll"><table class="restored-matrix"><thead><tr><th></th><th>V</th><th>P</th><th>R</th><th>S</th><th>A</th></tr></thead><tbody><tr><th>V</th><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><th>P</th><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><th>R</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><th>S</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><th>A</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></div><p class="matrix-note">V = Vibhav · P = Prachi · R = Ridhima · S = Sumit · A = Abhas</p></article>
+      </section>
       <footer class="page-footer"><span>CampusConnect <span class="footer-dot">•</span> Student Placement Dashboard</span><span>Built as a DSA-II PBL demo <span class="footer-dot">•</span> <a href="#overview">Back to top ↑</a></span></footer>
     </main>
   </div>
