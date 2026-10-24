@@ -1,31 +1,17 @@
-# Smart Placement & Internship Recommendation System — Dashboard
+# Smart Placement Dashboard — GitHub Pages Edition
 
-A polished Flask + SQLite demo for a DSA-II PBL project. It includes five sample student profiles, a skill-frequency chart, a student-to-skill network diagram, and simple graph representations (adjacency list and matrix).
+This is a static HTML/CSS/JavaScript edition made for GitHub Pages. It does not require Python, Flask, or a database server.
 
-## Run on macOS
-1. Extract this ZIP and open `Student_Profile_Dashboard_Pro` in VS Code.
-2. Open **Terminal → New Terminal**.
-3. Run these commands one at a time:
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python3 app.py
-```
-
-4. Open http://127.0.0.1:5000
-
-## Included
-- Sample profiles: Vibhav Rawat, Prachi Raghav, Ridhima Sinha, Sumit Kumar, Abhas Rawat
-- Add-profile form with SQLite persistence
-- Skill-frequency chart
-- Student/skill relationship graph
-- Example adjacency list and adjacency matrix
-- DFS/BFS traversal demonstration buttons
+## Publish on GitHub Pages
+1. Extract the ZIP.
+2. Open your GitHub repository `Student-Placement-`.
+3. Upload `index.html` and the `assets` folder to the repository root (not the ZIP itself).
+4. Commit the changes to the `main` branch.
+5. Open **Settings → Pages** and select **Deploy from a branch**, branch `main`, folder `/(root)`, then Save.
+6. Wait for the deployment, then open `https://vibhavrwt.github.io/Student-Placement-/`.
 
 ## Notes
-- The sample emails and profile data are illustrative demo data, not real contact information.
-- The graph illustrates student-to-skill relationships. The chart shows skill frequency in the sample profiles.
-- This is a prototype; it does not yet use a trained AI model or provide verified live job listings.
-- To restore the original five demo profiles, use **Restore demo data**.
+- The stylesheet is linked with a relative path: `./assets/style.css`, which works on GitHub Pages project sites.
+- Charts use Chart.js from a CDN and Google Fonts are optional styling enhancements, so internet access is needed for those external assets.
+- The student profiles and opportunity chart are illustrative demo data. The search, add-sample, and BFS/DFS demonstration buttons run in the browser.
+- GitHub Pages is static hosting; this edition does not save new profiles to a persistent database.

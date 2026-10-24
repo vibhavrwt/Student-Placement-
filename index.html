@@ -1,154 +1,66 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pathway | Smart Placement Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Student profile dashboard and placement opportunity explorer.">
+  <title>Student Placement Dashboard</title>
+  <link rel="stylesheet" href="./assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="./assets/script.js" defer></script>
 </head>
 <body>
-<div class="app-shell">
-  <aside class="sidebar">
-    <div class="brand"><div class="brand-mark">P</div><div><strong>pathway</strong><span>CAREER INTELLIGENCE</span></div></div>
-    <div class="side-label">WORKSPACE</div>
-    <a class="nav-item active" href="#overview"><span class="nav-icon">▦</span> Overview</a>
-    <a class="nav-item" href="#students"><span class="nav-icon">♙</span> Student profiles <span class="nav-count">{{ students|length }}</span></a>
-    <a class="nav-item" href="#insights"><span class="nav-icon">⌁</span> Skill insights</a>
-    <a class="nav-item" href="#graph"><span class="nav-icon">◎</span> DSA graph lab</a>
-    <div class="sidebar-bottom">
-      <div class="mini-card"><div class="mini-icon">✦</div><strong>Build your future</strong><p>Connect student skills with meaningful opportunities.</p></div>
-      <div class="user-chip"><div class="avatar avatar-purple">VR</div><div><strong>PBL Workspace</strong><span>Student project</span></div><span class="dots">•••</span></div>
-    </div>
-  </aside>
-
-  <main class="main">
-    <header class="topbar"><div class="crumb">Workspace <span>/</span> <b>Overview</b></div><div class="top-actions"><span class="status-dot"></span><span>Demo environment</span><div class="top-avatar">P</div></div></header>
-    <section class="welcome" id="overview">
-      <div><div class="eyebrow"><span class="spark">✦</span> SMART PLACEMENT PLATFORM</div><h1>Find the path to your <em>next opportunity.</em></h1><p class="subtitle">A student-first dashboard that maps skills, interests, and career preferences into one clear view.</p></div>
-      <a class="primary-btn" href="#add-profile"><span>＋</span> Add student profile</a>
-    </section>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}<div class="flash-wrap">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
-    {% endwith %}
-
-    <section class="stats-grid">
-      <article class="stat-card"><div class="stat-head"><span>Total students</span><span class="stat-symbol purple">♙</span></div><div class="stat-value">{{ students|length }}</div><div class="stat-foot"><span class="trend">●</span> Profiles in this demo</div></article>
-      <article class="stat-card"><div class="stat-head"><span>Skills mapped</span><span class="stat-symbol blue">⌘</span></div><div class="stat-value">{{ top_skills|length }}<small>+</small></div><div class="stat-foot">Top skills shown below</div></article>
-      <article class="stat-card"><div class="stat-head"><span>Opportunity types</span><span class="stat-symbol orange">↗</span></div><div class="stat-value">3</div><div class="stat-foot">Internship · Placement · Either</div></article>
-      <article class="stat-card"><div class="stat-head"><span>Graph model</span><span class="stat-symbol green">⌘</span></div><div class="stat-value">O(V+E)<small>*</small></div><div class="stat-foot">Typical BFS / DFS traversal</div></article>
-    </section>
-
-    <section class="content-grid" id="insights">
-      <article class="panel skill-panel">
-        <div class="panel-head"><div><div class="panel-kicker">STUDENT DATA</div><h2>Skill landscape</h2><p>Most frequent skills across saved profiles</p></div><span class="panel-icon">↗</span></div>
-        {% if top_skills %}
-        <div class="bar-chart">
-          {% for skill, count in top_skills %}
-          <div class="bar-row"><div class="bar-label">{{ skill }}</div><div class="bar-track"><div class="bar-fill fill-{{ loop.index }}" style="width: {{ (count / max_count * 100)|int }}%"></div></div><div class="bar-number">{{ count }}</div></div>
-          {% endfor %}
-        </div>
-        {% else %}<p>No skills to display yet.</p>{% endif %}
-        <div class="chart-note"><span class="note-dot"></span> Skill frequency · updates when a profile is saved</div>
-      </article>
-      <article class="panel insight-panel">
-        <div class="panel-head"><div><div class="panel-kicker">CAREER SNAPSHOT</div><h2>Profile mix</h2><p>Preferred opportunity type</p></div><span class="panel-icon">◌</span></div>
-        {% set internships = students|selectattr('opportunity', 'equalto', 'Internship')|list|length %}
-        {% set placements = students|selectattr('opportunity', 'equalto', 'Placement')|list|length %}
-        {% set either = students|selectattr('opportunity', 'equalto', 'Either')|list|length %}
-        <div class="donut-wrap"><div class="donut" style="--intern: {{ (internships / (students|length if students|length else 1) * 100)|int }}%; --place: {{ (placements / (students|length if students|length else 1) * 100)|int }}%;"><div class="donut-center"><strong>{{ students|length }}</strong><span>profiles</span></div></div></div>
-        <div class="legend"><div><span class="legend-dot lavender"></span> Internship <b>{{ internships }}</b></div><div><span class="legend-dot blue-dot"></span> Placement <b>{{ placements }}</b></div><div><span class="legend-dot mint"></span> Either <b>{{ either }}</b></div></div>
-      </article>
-    </section>
-
-    <section class="panel graph-panel" id="graph">
-      <div class="panel-head graph-head"><div><div class="panel-kicker">DATA STRUCTURES & ALGORITHMS</div><h2>Student skill network</h2><p>A graph view of how students connect to shared technical skills.</p></div><div class="graph-key"><span><i class="key-student"></i> Student</span><span><i class="key-skill"></i> Skill</span></div></div>
-      <div class="network-wrap">
-        <svg class="network" viewBox="0 0 900 300" role="img" aria-label="Graph connecting sample students to their skills">
-          <g class="edges">
-            <line x1="120" y1="65" x2="310" y2="80"/><line x1="120" y1="65" x2="300" y2="155"/><line x1="120" y1="125" x2="310" y2="80"/><line x1="120" y1="125" x2="500" y2="65"/>
-            <line x1="120" y1="185" x2="300" y2="155"/><line x1="120" y1="185" x2="500" y2="65"/><line x1="120" y1="245" x2="500" y2="155"/><line x1="120" y1="245" x2="310" y2="225"/>
-            <line x1="120" y1="65" x2="500" y2="225"/><line x1="120" y1="125" x2="500" y2="225"/><line x1="120" y1="185" x2="500" y2="225"/><line x1="120" y1="245" x2="500" y2="225"/>
-            <line x1="500" y1="65" x2="750" y2="90"/><line x1="300" y1="155" x2="750" y2="90"/><line x1="500" y1="155" x2="750" y2="215"/><line x1="310" y1="225" x2="750" y2="215"/>
-          </g>
-          <g class="student-nodes">
-            <rect x="24" y="48" width="178" height="34" rx="17"/><text x="113" y="69">Vibhav Rawat</text>
-            <rect x="24" y="108" width="178" height="34" rx="17"/><text x="113" y="129">Prachi Raghav</text>
-            <rect x="24" y="168" width="178" height="34" rx="17"/><text x="113" y="189">Ridhima Sinha</text>
-            <rect x="24" y="228" width="178" height="34" rx="17"/><text x="113" y="249">Sumit Kumar</text>
-            <rect x="24" y="8" width="178" height="30" rx="15" class="extra-node"/><text x="113" y="27">Abhas Rawat</text>
-          </g>
-          <g class="skill-nodes">
-            <circle cx="310" cy="80" r="38"/><text x="310" y="84">Python</text>
-            <circle cx="300" cy="155" r="35"/><text x="300" y="159">SQL</text>
-            <circle cx="500" cy="65" r="38"/><text x="500" y="69">Web</text>
-            <circle cx="500" cy="155" r="38"/><text x="500" y="159">Java</text>
-            <circle cx="310" cy="225" r="39"/><text x="310" y="229">Analysis</text>
-            <circle cx="500" cy="225" r="38"/><text x="500" y="229">Cybersecurity</text>
-            <circle cx="750" cy="90" r="40" class="op-node"/><text x="750" y="94">Internship</text>
-            <circle cx="750" cy="215" r="40" class="op-node"/><text x="750" y="219">Placement</text>
-          </g>
-        </svg>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#"><span class="brand-mark">SP</span><span>Campus<span class="brand-light">Connect</span></span></a>
+      <div class="side-label">WORKSPACE</div>
+      <a class="nav-item active" href="#overview"><span>▦</span> Overview</a>
+      <a class="nav-item" href="#students"><span>♙</span> Student profiles</a>
+      <a class="nav-item" href="#insights"><span>◷</span> Skill insights</a>
+      <a class="nav-item" href="#network"><span>⌘</span> Skill network</a>
+      <div class="sidebar-note">
+        <div class="note-icon">✦</div>
+        <strong>Build your next step</strong>
+        <p>Explore skills and discover opportunity types that fit your learning path.</p>
       </div>
-      <div class="graph-caption"><span><b>Vertices (V)</b> = students, skills, and opportunity types</span><span><b>Edges (E)</b> = relationships between them</span></div>
-      <div class="traversal-row"><div><strong>Explore graph traversal</strong><span>Illustrative traversal order for the sample network</span></div><div class="traversal-actions"><button class="secondary-btn" type="button" onclick="showTraversal('BFS')">Run BFS</button><button class="secondary-btn" type="button" onclick="showTraversal('DFS')">Run DFS</button></div></div>
-      <div class="traversal-result" id="traversal-result">Choose BFS or DFS to view a sample traversal order.</div>
-    </section>
+      <div class="side-footer"><span class="status-dot"></span> Demo dashboard <span class="version">v1.0</span></div>
+    </aside>
 
+    <main class="main-content">
+      <header class="topbar">
+        <div><div class="eyebrow">STUDENT SUCCESS / DASHBOARD</div><h1>Placement overview</h1><p class="subhead">A clear view of student skills, profiles, and career pathways.</p></div>
+        <div class="top-actions"><span class="demo-pill"><span class="status-dot"></span> Sample data</span><div class="avatar">VR</div></div>
+      </header>
 
-    <section class="content-grid representation-grid">
-      <article class="panel representation-panel">
-        <div class="panel-head"><div><div class="panel-kicker">GRAPH REPRESENTATION</div><h2>Adjacency list</h2><p>Each vertex stores the vertices directly connected to it.</p></div><span class="panel-icon">≋</span></div>
-        <div class="adjacency-list">
-          <div><b>Vibhav Rawat</b><span>Python · SQL · Cybersecurity</span></div>
-          <div><b>Prachi Raghav</b><span>Python · Web · Communication</span></div>
-          <div><b>Ridhima Sinha</b><span>Java · DSA · SQL</span></div>
-          <div><b>Sumit Kumar</b><span>Python · Analysis · Excel</span></div>
-          <div><b>Abhas Rawat</b><span>Web · UI Design · JavaScript</span></div>
-        </div>
-        <div class="code-note">Example representation · simplified sample connections</div>
-      </article>
-      <article class="panel representation-panel">
-        <div class="panel-head"><div><div class="panel-kicker">GRAPH REPRESENTATION</div><h2>Adjacency matrix</h2><p>1 means a connection exists; 0 means no direct connection.</p></div><span class="panel-icon">▦</span></div>
-        <div class="matrix-wrap"><table class="matrix-table"><thead><tr><th></th><th>V</th><th>P</th><th>R</th><th>S</th><th>A</th></tr></thead><tbody>
-          <tr><th>V</th><td class="one">0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
-          <tr><th>P</th><td>1</td><td class="one">0</td><td>0</td><td>0</td><td>0</td></tr>
-          <tr><th>R</th><td>0</td><td>0</td><td class="one">0</td><td>0</td><td>0</td></tr>
-          <tr><th>S</th><td>0</td><td>0</td><td>0</td><td class="one">0</td><td>0</td></tr>
-          <tr><th>A</th><td>0</td><td>0</td><td>0</td><td>0</td><td class="one">0</td></tr>
-        </tbody></table></div>
-        <div class="code-note">V = Vibhav · P = Prachi · R = Ridhima · S = Sumit · A = Abhas</div>
-      </article>
-    </section>
+      <section class="welcome-card" id="overview">
+        <div class="welcome-copy"><span class="welcome-kicker">YOUR CAREER, VISUALIZED</span><h2>Turn your skills into<br><em>opportunities.</em></h2><p>Review student profiles, understand skill trends, and explore how learning connects to placement pathways.</p><a class="primary-btn" href="#students">Explore profiles <span>↗</span></a></div>
+        <div class="welcome-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="art-core">✦</div><div class="float-card fc-one"><span class="mini-icon">⌘</span><span><b>Skills</b><small>Map your strengths</small></span></div><div class="float-card fc-two"><span class="mini-icon green">↗</span><span><b>Pathways</b><small>Find your direction</small></span></div><div class="art-dot dot-one"></div><div class="art-dot dot-two"></div></div>
+      </section>
 
-    <section class="content-grid bottom-grid">
-      <article class="panel table-panel">
-        <div class="panel-head"><div><div class="panel-kicker">SAVED RECORDS</div><h2>Student profiles</h2><p>Sample profiles stored in the local SQLite database</p></div><span class="count-pill">{{ students|length }} total</span></div>
-        <div class="table-scroll"><table><thead><tr><th>STUDENT</th><th>SKILLS</th><th>PREFERRED ROLE</th><th>TYPE</th></tr></thead><tbody>
-        {% for student in students %}
-        <tr><td><div class="student-cell"><div class="avatar avatar-{{ loop.index }}">{{ student['name'].split()[0][0] }}{{ student['name'].split()[-1][0] }}</div><div><strong>{{ student['name'] }}</strong><small>{{ student['course'] }}</small></div></div></td><td><div class="tag-list">{% for skill in student['skills'].split(',')[:2] %}<span class="tag">{{ skill.strip() }}</span>{% endfor %}</div></td><td>{{ student['role'] }}</td><td><span class="type-pill">{{ student['opportunity'] }}</span></td></tr>
-        {% endfor %}
-        </tbody></table></div>
-      </article>
-      <article class="panel form-panel" id="add-profile">
-        <div class="panel-head"><div><div class="panel-kicker">GROW THE NETWORK</div><h2>Add a profile</h2><p>Enter sample details to update the dashboard.</p></div><span class="panel-icon">＋</span></div>
-        <form action="{{ url_for('add_student') }}" method="post" class="profile-form">
-          <label>Full name<input name="name" placeholder="e.g. Aditi Sharma" required></label>
-          <label>Email address<input name="email" type="email" placeholder="student@example.com" required></label>
-          <label>Course / branch<input name="course" placeholder="B.Tech CSE" required></label>
-          <label>Technical skills<input name="skills" placeholder="Python, SQL, DSA" required></label>
-          <label>Preferred job role<input name="role" placeholder="Software Developer" required></label>
-          <div class="form-row"><label>Opportunity type<select name="opportunity" required><option value="Internship">Internship</option><option value="Placement">Placement</option><option value="Either">Either</option></select></label><label>Location<input name="location" placeholder="Noida / Remote" required></label></div>
-          <button class="primary-btn full-btn" type="submit">Save student profile <span>↗</span></button>
-        </form>
-        <form action="{{ url_for('reset_demo') }}" method="post" class="reset-form"><button class="text-btn" type="submit">↻ Restore demo data</button></form>
-      </article>
-    </section>
-    <footer>PATHWAY · DSA-II PBL PROTOTYPE <span>Built for learning · Sample data only</span></footer>
-  </main>
-</div>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+      <section class="stats-grid" aria-label="Dashboard summary">
+        <article class="stat-card"><div class="stat-top"><span class="stat-icon purple">♙</span><span class="stat-caption">PROFILE DIRECTORY</span></div><div class="stat-number" id="studentCount">5</div><div class="stat-bottom">Student profiles <span class="stat-trend">↗</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-icon teal">✧</span><span class="stat-caption">SKILL COVERAGE</span></div><div class="stat-number" id="skillCount">8</div><div class="stat-bottom">Distinct skills listed <span class="stat-trend">↗</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-icon orange">◎</span><span class="stat-caption">PATHWAYS</span></div><div class="stat-number">4</div><div class="stat-bottom">Opportunity categories <span class="stat-trend">↗</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">⌘</span><span class="stat-caption">GRAPH DEMO</span></div><div class="stat-number">BFS / DFS</div><div class="stat-bottom">Graph traversal examples</div></article>
+      </section>
+
+      <section class="content-grid" id="insights">
+        <article class="panel skill-panel"><div class="panel-heading"><div><h3>Skill landscape</h3><p>Most frequently listed skills across sample profiles</p></div><span class="panel-menu">•••</span></div><div class="chart-wrap"><canvas id="skillsChart" aria-label="Bar chart of skill frequency"></canvas></div><div class="panel-foot"><span class="legend-dot purple-dot"></span> Skill mentions <span class="foot-note">Illustrative sample data</span></div></article>
+        <article class="panel opportunity-panel"><div class="panel-heading"><div><h3>Opportunity mix</h3><p>Explore common career pathways</p></div><span class="panel-menu">•••</span></div><div class="donut-wrap"><canvas id="opportunityChart" aria-label="Doughnut chart of opportunity types"></canvas><div class="donut-center"><strong>4</strong><span>PATHWAYS</span></div></div><div class="legend-list"><span><i class="legend-dot purple-dot"></i>Internship <b>35%</b></span><span><i class="legend-dot teal-dot"></i>Full-time <b>30%</b></span><span><i class="legend-dot orange-dot"></i>Project <b>20%</b></span><span><i class="legend-dot blue-dot"></i>Training <b>15%</b></span></div></article>
+      </section>
+
+      <section class="panel students-panel" id="students"><div class="panel-heading students-heading"><div><h3>Student profiles</h3><p>Sample directory — search by name, skill, or interest</p></div><div class="table-actions"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Search profiles..." aria-label="Search student profiles"></label><button class="outline-btn" id="addSampleBtn">＋ Add sample</button></div></div>
+        <div class="table-scroll"><table><thead><tr><th>STUDENT</th><th>SKILLS</th><th>INTEREST</th><th>READINESS</th></tr></thead><tbody id="studentRows"></tbody></table></div>
+        <div class="table-footer"><span id="resultCount">Showing 5 profiles</span><span class="table-footer-note">Sample information for demonstration</span></div>
+      </section>
+
+      <section class="content-grid lower-grid" id="network">
+        <article class="panel network-panel"><div class="panel-heading"><div><h3>Student–skill network</h3><p>A simple graph connecting learners to shared skills</p></div><span class="tag">GRAPH VIEW</span></div><div class="network-visual" id="networkVisual"><svg viewBox="0 0 600 270" role="img" aria-label="Illustrative graph of students connected to skills"><g class="edges"><line x1="100" y1="65" x2="270" y2="45"/><line x1="100" y1="65" x2="270" y2="130"/><line x1="100" y1="135" x2="270" y2="45"/><line x1="100" y1="135" x2="270" y2="205"/><line x1="100" y1="205" x2="270" y2="130"/><line x1="100" y1="205" x2="270" y2="205"/><line x1="270" y1="45" x2="485" y2="65"/><line x1="270" y1="130" x2="485" y2="135"/><line x1="270" y1="205" x2="485" y2="205"/><line x1="270" y1="45" x2="485" y2="135"/></g><g class="student-nodes"><circle cx="100" cy="65" r="25"/><circle cx="100" cy="135" r="25"/><circle cx="100" cy="205" r="25"/></g><g class="skill-nodes"><circle cx="270" cy="45" r="21"/><circle cx="270" cy="130" r="21"/><circle cx="270" cy="205" r="21"/></g><g class="path-nodes"><circle cx="485" cy="65" r="25"/><circle cx="485" cy="135" r="25"/><circle cx="485" cy="205" r="25"/></g><g class="node-labels"><text x="100" y="69">VR</text><text x="100" y="139">PR</text><text x="100" y="209">RS</text><text x="270" y="49">Py</text><text x="270" y="134">JS</text><text x="270" y="209">SQL</text><text x="485" y="69">Dev</text><text x="485" y="139">Data</text><text x="485" y="209">Web</text></g></svg><div class="network-labels"><span><i class="node-key student-key"></i> Students</span><span><i class="node-key skill-key"></i> Skills</span><span><i class="node-key path-key"></i> Pathways</span></div></div></article>
+        <article class="panel traversal-panel"><div class="panel-heading"><div><h3>Graph traversal lab</h3><p>Try common graph search approaches</p></div></div><div class="traversal-info"><div class="algo-icon">⌘</div><div><strong>Explore connections</strong><p>BFS explores level by level. DFS follows a branch before backtracking.</p></div></div><div class="traversal-buttons"><button class="primary-btn small" id="bfsBtn">Run BFS</button><button class="outline-btn small" id="dfsBtn">Run DFS</button></div><div class="traversal-result" aria-live="polite"><span class="result-label">TRAVERSAL ORDER</span><p id="traversalOutput">Choose BFS or DFS to see a sample traversal.</p></div></article>
+      </section>
+
+      <footer class="page-footer"><span>CampusConnect <span class="footer-dot">•</span> Student Placement Dashboard</span><span>Built as a DSA-II PBL demo <span class="footer-dot">•</span> <a href="#overview">Back to top ↑</a></span></footer>
+    </main>
+  </div>
 </body>
 </html>
