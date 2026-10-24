@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pathway | Smart Placement Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">P</div><div><strong>pathway</strong><span>CAREER INTELLIGENCE</span></div></div>
+    <div class="side-label">WORKSPACE</div>
+    <a class="nav-item active" href="#overview"><span class="nav-icon">▦</span> Overview</a>
+    <a class="nav-item" href="#students"><span class="nav-icon">♙</span> Student profiles <span class="nav-count">{{ students|length }}</span></a>
+    <a class="nav-item" href="#insights"><span class="nav-icon">⌁</span> Skill insights</a>
+    <a class="nav-item" href="#graph"><span class="nav-icon">◎</span> DSA graph lab</a>
+    <div class="sidebar-bottom">
+      <div class="mini-card"><div class="mini-icon">✦</div><strong>Build your future</strong><p>Connect student skills with meaningful opportunities.</p></div>
+      <div class="user-chip"><div class="avatar avatar-purple">VR</div><div><strong>PBL Workspace</strong><span>Student project</span></div><span class="dots">•••</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar"><div class="crumb">Workspace <span>/</span> <b>Overview</b></div><div class="top-actions"><span class="status-dot"></span><span>Demo environment</span><div class="top-avatar">P</div></div></header>
+    <section class="welcome" id="overview">
+      <div><div class="eyebrow"><span class="spark">✦</span> SMART PLACEMENT PLATFORM</div><h1>Find the path to your <em>next opportunity.</em></h1><p class="subtitle">A student-first dashboard that maps skills, interests, and career preferences into one clear view.</p></div>
+      <a class="primary-btn" href="#add-profile"><span>＋</span> Add student profile</a>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}<div class="flash-wrap">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+    {% endwith %}
+
+    <section class="stats-grid">
+      <article class="stat-card"><div class="stat-head"><span>Total students</span><span class="stat-symbol purple">♙</span></div><div class="stat-value">{{ students|length }}</div><div class="stat-foot"><span class="trend">●</span> Profiles in this demo</div></article>
+      <article class="stat-card"><div class="stat-head"><span>Skills mapped</span><span class="stat-symbol blue">⌘</span></div><div class="stat-value">{{ top_skills|length }}<small>+</small></div><div class="stat-foot">Top skills shown below</div></article>
+      <article class="stat-card"><div class="stat-head"><span>Opportunity types</span><span class="stat-symbol orange">↗</span></div><div class="stat-value">3</div><div class="stat-foot">Internship · Placement · Either</div></article>
+      <article class="stat-card"><div class="stat-head"><span>Graph model</span><span class="stat-symbol green">⌘</span></div><div class="stat-value">O(V+E)<small>*</small></div><div class="stat-foot">Typical BFS / DFS traversal</div></article>
+    </section>
+
+    <section class="content-grid" id="insights">
+      <article class="panel skill-panel">
+        <div class="panel-head"><div><div class="panel-kicker">STUDENT DATA</div><h2>Skill landscape</h2><p>Most frequent skills across saved profiles</p></div><span class="panel-icon">↗</span></div>
+        {% if top_skills %}
+        <div class="bar-chart">
+          {% for skill, count in top_skills %}
+          <div class="bar-row"><div class="bar-label">{{ skill }}</div><div class="bar-track"><div class="bar-fill fill-{{ loop.index }}" style="width: {{ (count / max_count * 100)|int }}%"></div></div><div class="bar-number">{{ count }}</div></div>
+          {% endfor %}
+        </div>
+        {% else %}<p>No skills to display yet.</p>{% endif %}
+        <div class="chart-note"><span class="note-dot"></span> Skill frequency · updates when a profile is saved</div>
+      </article>
+      <article class="panel insight-panel">
+        <div class="panel-head"><div><div class="panel-kicker">CAREER SNAPSHOT</div><h2>Profile mix</h2><p>Preferred opportunity type</p></div><span class="panel-icon">◌</span></div>
+        {% set internships = students|selectattr('opportunity', 'equalto', 'Internship')|list|length %}
+        {% set placements = students|selectattr('opportunity', 'equalto', 'Placement')|list|length %}
+        {% set either = students|selectattr('opportunity', 'equalto', 'Either')|list|length %}
+        <div class="donut-wrap"><div class="donut" style="--intern: {{ (internships / (students|length if students|length else 1) * 100)|int }}%; --place: {{ (placements / (students|length if students|length else 1) * 100)|int }}%;"><div class="donut-center"><strong>{{ students|length }}</strong><span>profiles</span></div></div></div>
+        <div class="legend"><div><span class="legend-dot lavender"></span> Internship <b>{{ internships }}</b></div><div><span class="legend-dot blue-dot"></span> Placement <b>{{ placements }}</b></div><div><span class="legend-dot mint"></span> Either <b>{{ either }}</b></div></div>
+      </article>
+    </section>
+
+    <section class="panel graph-panel" id="graph">
+      <div class="panel-head graph-head"><div><div class="panel-kicker">DATA STRUCTURES & ALGORITHMS</div><h2>Student skill network</h2><p>A graph view of how students connect to shared technical skills.</p></div><div class="graph-key"><span><i class="key-student"></i> Student</span><span><i class="key-skill"></i> Skill</span></div></div>
+      <div class="network-wrap">
+        <svg class="network" viewBox="0 0 900 300" role="img" aria-label="Graph connecting sample students to their skills">
+          <g class="edges">
+            <line x1="120" y1="65" x2="310" y2="80"/><line x1="120" y1="65" x2="300" y2="155"/><line x1="120" y1="125" x2="310" y2="80"/><line x1="120" y1="125" x2="500" y2="65"/>
+            <line x1="120" y1="185" x2="300" y2="155"/><line x1="120" y1="185" x2="500" y2="65"/><line x1="120" y1="245" x2="500" y2="155"/><line x1="120" y1="245" x2="310" y2="225"/>
+            <line x1="120" y1="65" x2="500" y2="225"/><line x1="120" y1="125" x2="500" y2="225"/><line x1="120" y1="185" x2="500" y2="225"/><line x1="120" y1="245" x2="500" y2="225"/>
+            <line x1="500" y1="65" x2="750" y2="90"/><line x1="300" y1="155" x2="750" y2="90"/><line x1="500" y1="155" x2="750" y2="215"/><line x1="310" y1="225" x2="750" y2="215"/>
+          </g>
+          <g class="student-nodes">
+            <rect x="24" y="48" width="178" height="34" rx="17"/><text x="113" y="69">Vibhav Rawat</text>
+            <rect x="24" y="108" width="178" height="34" rx="17"/><text x="113" y="129">Prachi Raghav</text>
+            <rect x="24" y="168" width="178" height="34" rx="17"/><text x="113" y="189">Ridhima Sinha</text>
+            <rect x="24" y="228" width="178" height="34" rx="17"/><text x="113" y="249">Sumit Kumar</text>
+            <rect x="24" y="8" width="178" height="30" rx="15" class="extra-node"/><text x="113" y="27">Abhas Rawat</text>
+          </g>
+          <g class="skill-nodes">
+            <circle cx="310" cy="80" r="38"/><text x="310" y="84">Python</text>
+            <circle cx="300" cy="155" r="35"/><text x="300" y="159">SQL</text>
+            <circle cx="500" cy="65" r="38"/><text x="500" y="69">Web</text>
+            <circle cx="500" cy="155" r="38"/><text x="500" y="159">Java</text>
+            <circle cx="310" cy="225" r="39"/><text x="310" y="229">Analysis</text>
+            <circle cx="500" cy="225" r="38"/><text x="500" y="229">Cybersecurity</text>
+            <circle cx="750" cy="90" r="40" class="op-node"/><text x="750" y="94">Internship</text>
+            <circle cx="750" cy="215" r="40" class="op-node"/><text x="750" y="219">Placement</text>
+          </g>
+        </svg>
+      </div>
+      <div class="graph-caption"><span><b>Vertices (V)</b> = students, skills, and opportunity types</span><span><b>Edges (E)</b> = relationships between them</span></div>
+      <div class="traversal-row"><div><strong>Explore graph traversal</strong><span>Illustrative traversal order for the sample network</span></div><div class="traversal-actions"><button class="secondary-btn" type="button" onclick="showTraversal('BFS')">Run BFS</button><button class="secondary-btn" type="button" onclick="showTraversal('DFS')">Run DFS</button></div></div>
+      <div class="traversal-result" id="traversal-result">Choose BFS or DFS to view a sample traversal order.</div>
+    </section>
+
+
+    <section class="content-grid representation-grid">
+      <article class="panel representation-panel">
+        <div class="panel-head"><div><div class="panel-kicker">GRAPH REPRESENTATION</div><h2>Adjacency list</h2><p>Each vertex stores the vertices directly connected to it.</p></div><span class="panel-icon">≋</span></div>
+        <div class="adjacency-list">
+          <div><b>Vibhav Rawat</b><span>Python · SQL · Cybersecurity</span></div>
+          <div><b>Prachi Raghav</b><span>Python · Web · Communication</span></div>
+          <div><b>Ridhima Sinha</b><span>Java · DSA · SQL</span></div>
+          <div><b>Sumit Kumar</b><span>Python · Analysis · Excel</span></div>
+          <div><b>Abhas Rawat</b><span>Web · UI Design · JavaScript</span></div>
+        </div>
+        <div class="code-note">Example representation · simplified sample connections</div>
+      </article>
+      <article class="panel representation-panel">
+        <div class="panel-head"><div><div class="panel-kicker">GRAPH REPRESENTATION</div><h2>Adjacency matrix</h2><p>1 means a connection exists; 0 means no direct connection.</p></div><span class="panel-icon">▦</span></div>
+        <div class="matrix-wrap"><table class="matrix-table"><thead><tr><th></th><th>V</th><th>P</th><th>R</th><th>S</th><th>A</th></tr></thead><tbody>
+          <tr><th>V</th><td class="one">0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><th>P</th><td>1</td><td class="one">0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><th>R</th><td>0</td><td>0</td><td class="one">0</td><td>0</td><td>0</td></tr>
+          <tr><th>S</th><td>0</td><td>0</td><td>0</td><td class="one">0</td><td>0</td></tr>
+          <tr><th>A</th><td>0</td><td>0</td><td>0</td><td>0</td><td class="one">0</td></tr>
+        </tbody></table></div>
+        <div class="code-note">V = Vibhav · P = Prachi · R = Ridhima · S = Sumit · A = Abhas</div>
+      </article>
+    </section>
+
+    <section class="content-grid bottom-grid">
+      <article class="panel table-panel">
+        <div class="panel-head"><div><div class="panel-kicker">SAVED RECORDS</div><h2>Student profiles</h2><p>Sample profiles stored in the local SQLite database</p></div><span class="count-pill">{{ students|length }} total</span></div>
+        <div class="table-scroll"><table><thead><tr><th>STUDENT</th><th>SKILLS</th><th>PREFERRED ROLE</th><th>TYPE</th></tr></thead><tbody>
+        {% for student in students %}
+        <tr><td><div class="student-cell"><div class="avatar avatar-{{ loop.index }}">{{ student['name'].split()[0][0] }}{{ student['name'].split()[-1][0] }}</div><div><strong>{{ student['name'] }}</strong><small>{{ student['course'] }}</small></div></div></td><td><div class="tag-list">{% for skill in student['skills'].split(',')[:2] %}<span class="tag">{{ skill.strip() }}</span>{% endfor %}</div></td><td>{{ student['role'] }}</td><td><span class="type-pill">{{ student['opportunity'] }}</span></td></tr>
+        {% endfor %}
+        </tbody></table></div>
+      </article>
+      <article class="panel form-panel" id="add-profile">
+        <div class="panel-head"><div><div class="panel-kicker">GROW THE NETWORK</div><h2>Add a profile</h2><p>Enter sample details to update the dashboard.</p></div><span class="panel-icon">＋</span></div>
+        <form action="{{ url_for('add_student') }}" method="post" class="profile-form">
+          <label>Full name<input name="name" placeholder="e.g. Aditi Sharma" required></label>
+          <label>Email address<input name="email" type="email" placeholder="student@example.com" required></label>
+          <label>Course / branch<input name="course" placeholder="B.Tech CSE" required></label>
+          <label>Technical skills<input name="skills" placeholder="Python, SQL, DSA" required></label>
+          <label>Preferred job role<input name="role" placeholder="Software Developer" required></label>
+          <div class="form-row"><label>Opportunity type<select name="opportunity" required><option value="Internship">Internship</option><option value="Placement">Placement</option><option value="Either">Either</option></select></label><label>Location<input name="location" placeholder="Noida / Remote" required></label></div>
+          <button class="primary-btn full-btn" type="submit">Save student profile <span>↗</span></button>
+        </form>
+        <form action="{{ url_for('reset_demo') }}" method="post" class="reset-form"><button class="text-btn" type="submit">↻ Restore demo data</button></form>
+      </article>
+    </section>
+    <footer>PATHWAY · DSA-II PBL PROTOTYPE <span>Built for learning · Sample data only</span></footer>
+  </main>
+</div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
